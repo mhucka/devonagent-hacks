@@ -31,13 +31,17 @@ end sanitizedFileName
 tell application id "DNag"
 	activate
 	set destinationFolder to (choose folder with prompt "Choose destination folder for PDF files")
+	set numTabs to count of (tabs of browser 1)
+	show progress indicator "Generating PDF files ..." steps numTabs
 	repeat with theTab in (tabs of browser 1)
 		set theTitle to name of theTab
 		set contentAsPDF to PDF of theTab
 		set fileName to my sanitizedFileName(theTitle) & ".pdf"
 		set filePath to (the POSIX path of destinationFolder) & "/" & fileName
 		set theFile to open for access filePath with write permission
+		step progress indicator theTitle
 		write contentAsPDF to theFile
 		close access theFile
 	end repeat
+	hide progress indicator
 end tell
